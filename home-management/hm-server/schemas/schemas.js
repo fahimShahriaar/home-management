@@ -12,14 +12,33 @@ const memberSchema = new mongoose.Schema({
   ],
 });
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  mobile: {
-    type: String,
-    unique: true,
+const userSchema = new mongoose.Schema(
+  {
+    name: String,
+    mobile: {
+      type: String,
+      unique: true,
+    },
+    password: String,
   },
-  password: String,
-});
+  { timestamps: true }
+);
+
+const utilitySchema = new mongoose.Schema(
+  {
+    currentBill: Number,
+    khalarBill: Number,
+    internetBill: Number,
+    houseRent: Number,
+    otherBill: Number,
+    date: { type: Date, default: Date.now },
+  },
+  { timestamp: true }
+);
+
+// const activityLogSchema = new mongoose.Schema({
+
+// })
 
 const Member = mongoose.model("Member", memberSchema);
 const User = mongoose.model("User", userSchema);
