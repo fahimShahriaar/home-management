@@ -12,7 +12,7 @@ const year = d.getFullYear();
 const dateStr = year + "-" + month + "-" + date;
 console.log(dateStr);
 
-// POST a new Meal
+// CREATE a new memberMeal
 router.post("/", async (req, res) => {
   try {
     const { name, mobile, mealCount, bazarCost } = req.body;
@@ -50,6 +50,60 @@ router.post("/", async (req, res) => {
   }
 });
 
+// UPDATE new day meal to memberMeal
+router.put("/", async (req, res) => {
+  try {
+    const { name, mobile, mealCount, bazarCost } = req.body;
+    const user = await User.findOne({ mobile });
+    if (user) {
+      const memberMeal = await MemberMeal.findOne({ mobile });
+      if (memberMeal) {
+        // memberMeal.meals.push({
+        //   mealCount,
+        //   bazarCost,
+        // });
+        // const result = await memberMeal.save();
+        const result = await MemberMeal.findOneAndUpdate(
+          { mobile },
+          { $push: { meals: { mealCount, bazarCost } } },
+          { new: true }
+        );
+        res.status(200).json({ success: true, result });
+      } else {
+        res.status(500).json({
+          success: false,
+          error: "MemberMeal doesnot exist",
+        });
+      }
+    } else {
+      // write code here
+      res.status(500).json({ success: false, error: "user doesnot exist" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, error });
+  }
+});
+
+// UPDATE a specific meal with the date of meal array
+router.put("/:date", async (req, res) => {
+  try {
+    const { mobile, mealCount, bazarCost } = req.body;
+    const { date } = req.params;
+    await MemberMeal.findOneAndUpdate(
+      { mobile, "meals.date": date },
+      {
+        $set: {
+          "meals.$.mealCount": mealCount,
+          "meals.$.bazarCost": bazarCost,
+        },
+      },
+      { new: true }
+    );
+  } catch (error) {}
+});
+
+// Update meal
 router.patch("/", async (req, res) => {
   try {
     const { name, mobile, mealCount, bazarCost } = req.body;
