@@ -12,17 +12,20 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const memberSchema = new mongoose.Schema({
-  name: String,
-  mobile: String,
-  meals: [
-    {
-      mealCount: { type: Number, default: 0 },
-      bazarCost: Number,
-      date: { type: Date, default: Date.now },
-    },
-  ],
-});
+const memberMealSchema = new mongoose.Schema(
+  {
+    name: String,
+    mobile: String,
+    meals: [
+      {
+        mealCount: { type: Number, default: 0 },
+        bazarCost: Number,
+        datetime: { type: Date, default: Date.now },
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
 const utilitySchema = new mongoose.Schema(
   {
@@ -38,7 +41,7 @@ const utilitySchema = new mongoose.Schema(
     ],
     date: { type: Date, default: Date.now },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 const activityLogSchema = new mongoose.Schema(
@@ -48,16 +51,16 @@ const activityLogSchema = new mongoose.Schema(
     activity: String,
     date: { type: Date, default: Date.now },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
-const Member = mongoose.model("Member", memberSchema);
+const MemberMeal = mongoose.model("MemberMeal", memberMealSchema);
 const User = mongoose.model("User", userSchema);
 const Utility = mongoose.model("Utility", utilitySchema);
 const ActivityLog = mongoose.model("ActivityLog", activityLogSchema);
 
 module.exports = {
-  Member,
+  MemberMeal,
   User,
   Utility,
   ActivityLog,

@@ -30,15 +30,24 @@ router.post("/login", async (req, res) => {
     const { mobile, password } = req.body;
     const user = await User.findOne({ mobile });
     // console.log(user);
-    const isValid = await bcrypt.compare(password, user.password);
-    if (isValid) {
-      res.status(200).json({ success: true, result: "Loggedin successfully!" });
+    if (user) {
+      const isValid = await bcrypt.compare(password, user.password);
+      if (isValid) {
+        res
+          .status(200)
+          .json({ success: true, result: "Loggedin successfully!" });
+      } else {
+        res
+          .status(401)
+          .json({ success: false, result: "Authentication failed!" });
+      }
     } else {
       res
         .status(401)
-        .json({ success: false, result: "Authentication failed!" });
+        .json({ success: false, result: "You are not valid user!" });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ status: false, error });
   }
 });
