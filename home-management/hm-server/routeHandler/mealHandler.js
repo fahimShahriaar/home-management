@@ -12,6 +12,26 @@ const year = d.getFullYear();
 const dateStr = year + "-" + month + "-" + date;
 console.log(dateStr);
 
+// Add days to Date object in JavaScript
+function addDaysToDate(date, days) {
+  const dates = new Date(date);
+  const newDate = dates.setDate(dates.getDate() + parseInt(days));
+  let updateDate = new Date(newDate);
+  var dd = updateDate.getDate();
+
+  var mm = updateDate.getMonth() + 1;
+  var yyyy = updateDate.getFullYear();
+  if (dd < 10) {
+    dd = "0" + dd;
+  }
+
+  if (mm < 10) {
+    mm = "0" + mm;
+  }
+  updateDate = yyyy + "-" + mm + "-" + dd;
+  return updateDate;
+}
+
 // CREATE a new memberMeal
 router.post("/", async (req, res) => {
   try {
@@ -104,10 +124,10 @@ router.put("/:date", async (req, res) => {
 });
 
 // Update meal
-router.patch("/", async (req, res) => {
+router.patch("/update-meal", async (req, res) => {
   try {
-    const { name, mobile, mealCount, bazarCost } = req.body;
-    console.log(name, mobile, mealCount, bazarCost);
+    const { mobile, mealCount, bazarCost, date } = req.body;
+    console.log(mobile, mealCount, bazarCost);
     const user = await User.findOne({ mobile });
     // console.log("user", user);
     if (user) {
@@ -122,17 +142,34 @@ router.patch("/", async (req, res) => {
           .status(400)
           .json({ success: false, error: "No meal found! Please add first" });
       } else if (memberMeal.name) {
-        console.log("l-68", memberMeal);
-        const result = await MemberMeal.updateOne(
-          { mobile, "meals.datetime": new Date(dateStr) },
-          {
-            $set: {
-              "meals.$.mealCount": mealCount,
-              "meals.$.bazarCost": bazarCost,
+        const isAlredyAdded = await MemberMeal.findOne({
+          mobile,
+          "meals.datetime": { $gte: new Date(date), $lt: new Date(nextDate) },
+        });
+        console.log("isAlredyAdded", isAlredyAdded);
+        if (!isAlredyAdded) {
+          const nextDate = addDaysToDate(date, 1);
+          const result = await MemberMeal.findOneAndUpdate(
+            {
+              mobile,
+              "meals.datetime": {
+                $gte: new Date(date),
+                $lt: new Date(nextDate),
+              },
             },
-          }
-        );
-        res.status(200).json({ success: true, result: result });
+            {
+              $set: {
+                "meals.$.mealCount": mealCount,
+                "meals.$.bazarCost": bazarCost,
+              },
+            },
+            { new: true }
+          );
+          res.status(200).json({ success: true, result: result });
+        } else {
+          // Meal already added
+        }
+        // console.log("l-125 IS_ALREADY_ADDED", isAlredyAdded);
       }
     } else {
       // write code here
