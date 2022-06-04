@@ -42,6 +42,7 @@ router.post("/", async (req, res) => {
     if (user) {
       const memberMeal = await MemberMeal.findOne({ mobile });
       // console.log("memberMeal", memberMeal);
+      // If there is no meal of the user add new Meal to him
       if (!memberMeal) {
         const newMemberMeal = new MemberMeal({
           name,
@@ -56,14 +57,22 @@ router.post("/", async (req, res) => {
         const result = await newMemberMeal.save();
         res.status(200).json({ success: true, result });
       } else {
-        res.status(500).json({
-          success: false,
-          error: "Alredy Exist! For update use Update API",
+        // If the user already have a meal add new Day meal to the "meals" Array.
+        // Add a condition if the user already have a meal on the same date
+        const x = await MemberMeal.findOne({
+          "meals.datetime": { $eq: new Date(dateStr) },
         });
+        console.log(x);
+        const result = await MemberMeal.findOneAndUpdate(
+          { mobile },
+          { $push: { meals: { mealCount, bazarCost } } },
+          { new: true }
+        );
+        res.status(200).json({ success: true, result });
       }
     } else {
-      // write code here
-      res.status(500).json({ success: false, error: "user doesnot exist" });
+      // USER DOES NOT EXIST BLOCK
+      res.status(500).json({ success: false, error: "user does not exist" });
     }
   } catch (error) {
     res.status(500).json({ success: false, error });
@@ -73,7 +82,7 @@ router.post("/", async (req, res) => {
 // UPDATE new day meal to memberMeal
 router.put("/", async (req, res) => {
   try {
-    const { name, mobile, mealCount, bazarCost } = req.body;
+    const { mobile, mealCount, bazarCost } = req.body;
     const user = await User.findOne({ mobile });
     if (user) {
       const memberMeal = await MemberMeal.findOne({ mobile });
@@ -92,12 +101,12 @@ router.put("/", async (req, res) => {
       } else {
         res.status(500).json({
           success: false,
-          error: "MemberMeal doesnot exist",
+          error: "MemberMeal does not exist",
         });
       }
     } else {
       // write code here
-      res.status(500).json({ success: false, error: "user doesnot exist" });
+      res.status(500).json({ success: false, error: "user does not exist" });
     }
   } catch (error) {
     console.log(error);
@@ -105,25 +114,7 @@ router.put("/", async (req, res) => {
   }
 });
 
-// UPDATE a specific meal with the date of meal array
-router.put("/:date", async (req, res) => {
-  try {
-    const { mobile, mealCount, bazarCost } = req.body;
-    const { date } = req.params;
-    await MemberMeal.findOneAndUpdate(
-      { mobile, "meals.date": date },
-      {
-        $set: {
-          "meals.$.mealCount": mealCount,
-          "meals.$.bazarCost": bazarCost,
-        },
-      },
-      { new: true }
-    );
-  } catch (error) {}
-});
-
-// Update meal
+// Update existing meal
 router.patch("/update-meal", async (req, res) => {
   try {
     const { mobile, mealCount, bazarCost, date } = req.body;
@@ -142,12 +133,12 @@ router.patch("/update-meal", async (req, res) => {
           .status(400)
           .json({ success: false, error: "No meal found! Please add first" });
       } else if (memberMeal.name) {
-        const isAlredyAdded = await MemberMeal.findOne({
+        const isAlreadyAdded = await MemberMeal.findOne({
           mobile,
           "meals.datetime": { $gte: new Date(date), $lt: new Date(nextDate) },
         });
-        console.log("isAlredyAdded", isAlredyAdded);
-        if (!isAlredyAdded) {
+        console.log("isAlreadyAdded", isAlreadyAdded);
+        if (!isAlreadyAdded) {
           const nextDate = addDaysToDate(date, 1);
           const result = await MemberMeal.findOneAndUpdate(
             {
@@ -169,12 +160,89 @@ router.patch("/update-meal", async (req, res) => {
         } else {
           // Meal already added
         }
-        // console.log("l-125 IS_ALREADY_ADDED", isAlredyAdded);
+        // console.log("l-125 IS_ALREADY_ADDED", isAlreadyAdded);
       }
     } else {
       // write code here
-      res.status(500).json({ success: false, error: "user doesnot exist" });
+      res.status(500).json({ success: false, error: "user does not exist" });
     }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, error });
+  }
+});
+
+router.get("/test", async (req, res) => {
+  try {
+    const date = "2022-06-03";
+    const toDate = "2022-06-03";
+    const nextDate = addDaysToDate(toDate, 1);
+    // const result = await MemberMeal.findOne(
+    //   {
+    //     mobile: "01717222222",
+    //     // "meals.datetime": {
+    //     //   $gte: new Date(date),
+    //     //   $lt: new Date(nextDate),
+    //     // },
+    //   },
+    //   {
+    //     "meals.$": 1,
+    //   }
+    // );
+    // const User = mongoose.model(
+    //   "User",
+    //   new mongoose.Schema({
+    //     email: String,
+    //     password: String,
+    //     name: String,
+    //     days: [
+    //       {
+    //         day: Date,
+    //         data: {
+    //           average_score: {
+    //             type: mongoose.Schema.Types.Decimal128,
+    //             default: 0,
+    //           },
+    //         },
+    //       },
+    //     ],
+    //   })
+    // );
+    const result = await MemberMeal.aggregate([
+      { $match: { _id: "629775b6ef5e536d14eaeca7" } },
+      {
+        $project: {
+          meals: {
+            $filter: {
+              input: "$meals", // le tableau à limiter
+              as: "index", // un alias
+              cond: {
+                $and: [
+                  {
+                    $gte: ["$$index.datetime", new Date("2022-06-02")],
+                  },
+                  {
+                    $lte: ["$$index.datetime", new Date("2022-06-03")],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+    ]).project({
+      "meals.datetime": 1,
+      "meals.mealCount": 1,
+      "meals.bazarCost": 1,
+    });
+    console.log(result);
+    res.status(200).json({ success: true, data: result });
+    // .then((result) => {
+    //   console.log(result);
+    //   res.status(200).json({ success: true, data: result });
+    // });
+    // console.log(nextDate);
+    // res.status(200).json({ success: true, result });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, error });
