@@ -20,6 +20,8 @@ const memberMealSchema = new mongoose.Schema(
       {
         mealCount: { type: Number, default: 0 },
         bazarCost: Number,
+        localDate: { type: String, required: true },
+        localTime: { type: String, required: true },
         datetime: { type: Date, default: Date.now },
       },
     ],
