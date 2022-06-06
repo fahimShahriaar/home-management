@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const adminHandler = require("./routeHandler/adminHandler");
 const userHandler = require("./routeHandler/userHandler");
 const mealHandler = require("./routeHandler/mealHandler");
+const utilityHandler = require("./routeHandler/utilityHandler");
 
 // middlewares
 app.use(express.json());
@@ -17,5 +18,6 @@ mongoose
 app.use("/user", userHandler);
 app.use("/admin", adminHandler);
 app.use("/meal", mealHandler);
+app.use("/utility", utilityHandler);
 
 app.listen(8080, () => console.log("listening on port: 8080"));

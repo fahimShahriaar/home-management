@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { MemberMeal } = require("../schemas/schemas.js");
-const { User } = require("../schemas/schemas.js");
+const { MemberMeal } = require("../schemas/schemas");
+const { User } = require("../schemas/schemas");
+const { ActivityLog } = require("../schemas/schemas");
 
 // setting date
 const d = new Date();
@@ -12,8 +13,8 @@ const year = d.getFullYear();
 const dateStr = year + "-" + month + "-" + date;
 const localDate = dateStr;
 const localTime = d.toLocaleTimeString();
-console.log(localDate);
-console.log(localTime);
+// console.log(localDate);
+// console.log(localTime);
 
 // Add days to Date object in JavaScript
 function addDaysToDate(date, days) {
@@ -33,6 +34,18 @@ function addDaysToDate(date, days) {
   }
   updateDate = yyyy + "-" + mm + "-" + dd;
   return updateDate;
+}
+
+// Activity Log update
+async function updateActivityLog(name, mobile, activity, date) {
+  const activityLog = new ActivityLog({
+    name,
+    mobile,
+    activity,
+    date,
+  });
+  const result = await activityLog.save();
+  return result;
 }
 
 // CREATE a new memberMeal
@@ -66,15 +79,20 @@ router.post("/", async (req, res) => {
           ],
         });
         const result = await newMemberMeal.save();
+        updateActivityLog(name, mobile, "Added a new meal", date);
         res.status(200).json({ success: true, result });
       } else {
         // If the user already have a meal add new Day meal to the "meals" Array.
         //  && AND &&
         // Add a condition if the user already have a meal on the same date
         const isAlreadyExistOnTheSameDay = await MemberMeal.findOne({
+          mobile,
           "meals.localDate": date,
         });
-        console.log("isAlreadyExistOnTheSameDay", isAlreadyExistOnTheSameDay);
+        console.log(
+          "L91: isAlreadyExistOnTheSameDay",
+          isAlreadyExistOnTheSameDay
+        );
         if (!isAlreadyExistOnTheSameDay) {
           // Adding new Day meal in the "meals" Array
           const result = await MemberMeal.findOneAndUpdate(
@@ -86,6 +104,7 @@ router.post("/", async (req, res) => {
             },
             { new: true }
           );
+          updateActivityLog(name, mobile, "Added a new meal", date);
           res.status(200).json({ success: true, result });
         } else {
           res.status(200).json({
@@ -145,6 +164,7 @@ router.patch("/update-meal", async (req, res) => {
             },
             { new: true }
           );
+          updateActivityLog(memberMeal.name, mobile, "Updated a meal", date);
           res.status(200).json({ success: true, result: result });
         } else {
           // Nothing to update

@@ -51,7 +51,8 @@ const activityLogSchema = new mongoose.Schema(
     name: String,
     mobile: String,
     activity: String,
-    date: { type: Date, default: Date.now },
+    date: String,
+    datetime: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
