@@ -51,14 +51,14 @@ async function updateActivityLog(name, mobile, activity, date) {
 // CREATE a new memberMeal
 router.post("/", async (req, res) => {
   try {
-    const { name, mobile, mealCount, bazarCost, date } = req.body;
-    if (!(name, mobile, mealCount, bazarCost, date)) {
+    const { mobile, mealCount, bazarCost, date } = req.body;
+    if (!(mobile, mealCount, bazarCost, date)) {
       return res.json({
         success: false,
         result: "Please provide all the data...",
       });
     }
-    console.log(name, mobile, mealCount, bazarCost);
+    console.log(mobile, mealCount, bazarCost);
     const user = await User.findOne({ mobile });
     // console.log("user", user);
     if (user) {
@@ -67,7 +67,7 @@ router.post("/", async (req, res) => {
       // If there is no meal of the user add new Meal to him
       if (!memberMeal) {
         const newMemberMeal = new MemberMeal({
-          name,
+          name: user.name,
           mobile,
           meals: [
             {
@@ -79,7 +79,7 @@ router.post("/", async (req, res) => {
           ],
         });
         const result = await newMemberMeal.save();
-        updateActivityLog(name, mobile, "Added a new meal", date);
+        updateActivityLog(user.name, mobile, "Added a new meal", date);
         res.status(200).json({ success: true, result });
       } else {
         // If the user already have a meal add new Day meal to the "meals" Array.
@@ -104,7 +104,7 @@ router.post("/", async (req, res) => {
             },
             { new: true }
           );
-          updateActivityLog(name, mobile, "Added a new meal", date);
+          updateActivityLog(user.name, mobile, "Added a new meal", date);
           res.status(200).json({ success: true, result });
         } else {
           res.status(200).json({
@@ -179,6 +179,109 @@ router.patch("/update-meal", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.status(500).json({ success: false, error });
+  }
+});
+
+// Get all the meals of a user
+router.get("/", async (req, res) => {
+  try {
+    const { mobile } = req.query;
+    if (!mobile) {
+      return res.json({
+        success: false,
+        result: "Please provide the mobile number",
+      });
+    }
+    const user = await User.findOne({ mobile });
+    console.log(mobile);
+    if (user) {
+      const memberMeal = await MemberMeal.findOne(
+        { mobile },
+        { __v: 0, createdAt: 0, updatedAt: 0 }
+      );
+      if (!memberMeal) {
+        res.status(200).json({ success: false, result: "No meal found" });
+      } else {
+        res.status(200).json({ success: true, result: memberMeal });
+      }
+    } else {
+      res.status(500).json({ success: false, error: "user does not exist" });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error });
+  }
+});
+
+// Get all meals of all users
+router.get("/all", async (req, res) => {
+  try {
+    const memberMeals = await MemberMeal.find({}, { __v: 0, createdAt: 0 });
+    res.status(200).json({ success: true, result: memberMeals });
+  } catch (error) {
+    res.status(500).json({ success: false, error });
+  }
+});
+
+// Get mealCost of a user and calculate the total meal cost
+router.get("/meal-cost", async (req, res) => {
+  try {
+    const memberMeals = await MemberMeal.find({}, { __v: 0, createdAt: 0 });
+    // Calculating Per Meal Cost, Total Meals and Total BazarCost
+    let totalMeals = 0;
+    let totalBazarCost = 0;
+    for (const singleMember of memberMeals) {
+      // console.log(singleMember);
+      // console.log("==============================================");
+      // console.log("==============================================");
+      // console.log("==============================================");
+      for (const meal of singleMember.meals) {
+        // console.log(meal);
+        // console.log("==============================================");
+        // console.log("==============================================");
+        totalMeals += meal.mealCount;
+        totalBazarCost += meal.bazarCost;
+      }
+    }
+    let perMealCost = totalBazarCost / totalMeals;
+
+    console.log("totalMeals", totalMeals);
+    console.log("totalBazarCost", totalBazarCost);
+    console.log(`perMealCost: ${Math.ceil(perMealCost)}`);
+    res.json({
+      success: true,
+      result: {
+        totalMeals,
+        totalBazarCost,
+        perMealCost,
+      },
+    });
+    // const { mobile } = req.query;
+    // if (!mobile) {
+    //   return res.json({
+    //     success: false,
+    //     result: "Please provide the mobile number",
+    //   });
+    // }
+    // const user = await User.findOne({ mobile });
+    // console.log(mobile);
+    // if (user) {
+    //   const memberMeal = await MemberMeal.findOne(
+    //     { mobile },
+    //     { __v: 0, createdAt: 0, updatedAt: 0 }
+    //   );
+    //   if (!memberMeal) {
+    //     res.status(200).json({ success: false, result: "No meal found" });
+    //   } else {
+    //     const mealCost = memberMeal.meals.reduce((acc, meal) => {
+    //       return acc + meal.bazarCost;
+    //     }, 0);
+    //     res.status(200).json({ success: true, result: mealCost });
+    //   }
+    // } else {
+    //   res.status(500).json({ success: false, error: "user does not exist" });
+    // }
+  } catch (error) {
     res.status(500).json({ success: false, error });
   }
 });

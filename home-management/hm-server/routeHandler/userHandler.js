@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { User } = require("../schemas/schemas");
+const { MemberMeal } = require("../schemas/schemas");
 
 router.post("/signup", async (req, res) => {
   try {
@@ -33,9 +34,23 @@ router.post("/login", async (req, res) => {
     if (user) {
       const isValid = await bcrypt.compare(password, user.password);
       if (isValid) {
-        res
-          .status(200)
-          .json({ success: true, result: "Loggedin successfully!" });
+        const updatedUser = { ...user._doc };
+        delete updatedUser.password;
+        console.log(updatedUser);
+
+        // meal information of the user
+        const memberMeal = await MemberMeal.findOne(
+          { mobile },
+          { __v: 0, createdAt: 0, updatedAt: 0 }
+        );
+        if (!memberMeal) {
+          // updatedUser.meal = [];
+          // res.status(200).json({ success: false, result: "No meal found" });
+        } else {
+          // res.status(200).json({ success: true, result: memberMeal });
+        }
+
+        // res.status(200).json({ success: true, result: updatedUser });
       } else {
         res
           .status(401)
