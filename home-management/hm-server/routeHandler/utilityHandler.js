@@ -5,17 +5,22 @@ const { Utility } = require("../schemas/schemas");
 const { ActivityLog } = require("../schemas/schemas");
 
 // Activity Log update
-async function updateActivityLog(name, mobile, activity, date) {
+async function updateActivityLog(name, mobile, activity, date, res) {
+  const description = { ...res._doc };
+  delete description.__v;
+  console.log(description);
   const activityLog = new ActivityLog({
     name,
     mobile,
     activity,
+    description: JSON.stringify(description),
     date,
   });
   const result = await activityLog.save();
   return result;
 }
 
+// Create a new utility
 router.post("/", async (req, res) => {
   try {
     const {
@@ -25,28 +30,39 @@ router.post("/", async (req, res) => {
       houseRent,
       mobile,
       name,
+      month,
       date,
     } = req.body;
-    if (!(mobile, name, date)) {
+    if (!(mobile, name, month, date)) {
       return res.json({
         success: false,
         result: "Please provide all the data...",
       });
     }
-    //  save utility to DB
-    const newUtility = new Utility({
-      currentBill: currentBill ? currentBill : 0,
-      khalarBill: khalarBill ? khalarBill : 0,
-      internetBill: internetBill ? internetBill : 0,
-      houseRent: houseRent ? houseRent : 0,
-    });
-
-    const result = await newUtility.save();
-    updateActivityLog(name, mobile, "Utility added", date);
-    res.json({
-      success: true,
-      result,
-    });
+    // check if the month is already present in the database
+    const isAlreadyExist = await Utility.findOne({ month });
+    if (!isAlreadyExist) {
+      //  save utility to DB
+      const newUtility = new Utility({
+        currentBill: currentBill ? currentBill : 0,
+        khalarBill: khalarBill ? khalarBill : 0,
+        internetBill: internetBill ? internetBill : 0,
+        houseRent: houseRent ? houseRent : 0,
+        month,
+        createdBy: name,
+      });
+      const result = await newUtility.save();
+      updateActivityLog(name, mobile, "Utility added", date, result);
+      res.json({
+        success: true,
+        result,
+      });
+    } else {
+      res.json({
+        success: false,
+        result: "Already Exist on this month",
+      });
+    }
   } catch (error) {
     res.json({ success: false, error });
   }
@@ -55,6 +71,7 @@ router.post("/", async (req, res) => {
 // Update a utility
 router.put("/:id", async (req, res) => {
   try {
+    const { id } = req.params;
     const {
       currentBill,
       khalarBill,
@@ -62,31 +79,38 @@ router.put("/:id", async (req, res) => {
       houseRent,
       mobile,
       name,
+      month,
       date,
     } = req.body;
-    if (!(mobile, name, date)) {
-      return res.json({
+    const isUtilityExist = await Utility.findOne({ _id: id });
+    if (isUtilityExist) {
+      const result = await Utility.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: {
+            currentBill,
+            khalarBill,
+            internetBill,
+            houseRent,
+            month,
+            updatedBy: name,
+          },
+        },
+        { new: true }
+      );
+      updateActivityLog(name, mobile, "Utility updated", date, result);
+      res.json({
+        success: true,
+        result: result,
+      });
+    } else {
+      res.json({
         success: false,
-        result: "Please provide all the data...",
+        result: "Utility not found",
       });
     }
-    const result = await Utility.findOneAndUpdate(
-      { _id: req.params.id },
-      {
-        currentBill: currentBill ? currentBill : 0,
-        khalarBill: khalarBill ? khalarBill : 0,
-        internetBill: internetBill ? internetBill : 0,
-        houseRent: houseRent ? houseRent : 0,
-      }
-    );
-    updateActivityLog(name, mobile, "Utility updated", date);
-    res.json({
-      success: true,
-      result,
-    });
-  } catch (error) {
-    res.json({ success: false, error });
-  }
+    // console.log("isUtilityExist", isUtilityExist);s
+  } catch (error) {}
 });
 
 module.exports = router;

@@ -36,19 +36,13 @@ router.post("/login", async (req, res) => {
       if (isValid) {
         const updatedUser = { ...user._doc };
         delete updatedUser.password;
-        console.log(updatedUser);
-
-        // meal information of the user
-        const memberMeal = await MemberMeal.findOne(
-          { mobile },
-          { __v: 0, createdAt: 0, updatedAt: 0 }
-        );
-        if (!memberMeal) {
-          // updatedUser.meal = [];
-          // res.status(200).json({ success: false, result: "No meal found" });
-        } else {
-          // res.status(200).json({ success: true, result: memberMeal });
-        }
+        delete updatedUser.__v;
+        // console.log(updatedUser);
+        const userMealInfo = await mealInfo(mobile);
+        console.log("userMealInfo", userMealInfo);
+        res
+          .status(200)
+          .json({ success: true, user: updatedUser, mealInfo: userMealInfo });
 
         // res.status(200).json({ success: true, result: updatedUser });
       } else {
@@ -66,5 +60,34 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ status: false, error });
   }
 });
+
+// Get meal information of a user
+async function mealInfo(mobile) {
+  const memberMeals = await MemberMeal.findOne(
+    { mobile },
+    { __v: 0, createdAt: 0 }
+  );
+  // console.log(memberMeals);
+  if (memberMeals) {
+    // Calculating Per Meal Cost, Total Meals and Total BazarCost
+    let totalMeals = 0;
+    let totalBazarCost = 0;
+    for (const meal of memberMeals.meals) {
+      // console.log(meal);
+      totalMeals += meal.mealCount;
+      totalBazarCost += meal.bazarCost;
+    }
+    let perMealCost = totalBazarCost / totalMeals;
+
+    console.log("totalMeals", totalMeals);
+    console.log("totalBazarCost", totalBazarCost);
+    console.log(`perMealCost: ${Math.ceil(perMealCost)}`);
+    const userMealInfo = { totalMeals, totalBazarCost, perMealCost };
+    console.log(userMealInfo);
+    return userMealInfo;
+  } else {
+    return "No meal found";
+  }
+}
 
 module.exports = router;
