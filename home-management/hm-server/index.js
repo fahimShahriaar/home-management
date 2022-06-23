@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const adminHandler = require("./routeHandler/adminHandler");
@@ -8,6 +9,7 @@ const utilityHandler = require("./routeHandler/utilityHandler");
 
 // middlewares
 app.use(express.json());
+app.use(cors());
 
 // db connection
 mongoose
@@ -20,4 +22,6 @@ app.use("/admin", adminHandler);
 app.use("/meal", mealHandler);
 app.use("/utility", utilityHandler);
 
-app.listen(8080, () => console.log("listening on port: 8080"));
+app.listen(8080, "192.168.68.128", () =>
+  console.log("listening on port: 8080")
+);
