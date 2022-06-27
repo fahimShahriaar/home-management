@@ -1,18 +1,27 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet, View } from "react-native";
 // import FlexBox from "./Components/FlexBox";
 // import PracticeOne from "./Components/PracticeOne";
 // import PracticeTwo from "./Components/PracticeTwo";
-import AuthComp from "./Components/AuthComp/AuthComp";
+// import AuthComp from "./Components/AuthComp/AuthComp";
 import Login from "./Components/AuthComp/Login";
 import Signup from "./Components/AuthComp/Signup";
 import ReactComp from "./ReactComp";
 
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "rgb(255, 45, 85)",
+    // background: "white",
+  },
+};
+
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <View style={styles.appContainer}>
         <Stack.Navigator initialRouteName="Signup">
           <Stack.Screen

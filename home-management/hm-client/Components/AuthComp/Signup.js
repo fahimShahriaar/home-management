@@ -42,11 +42,13 @@ export default function Signup({ navigation, isSignup, setIsSignup }) {
         <View>
           <TextInput
             style={styles.textInput}
+            selectionColor="#2196F3"
             placeholder="Your Name"
             onChangeText={(enteredText) => setName(enteredText)}
           />
           <TextInput
             style={styles.textInput}
+            selectionColor="#2196F3"
             placeholder="Your Mobile"
             keyboardType="numeric"
             maxLength={11}
@@ -54,6 +56,7 @@ export default function Signup({ navigation, isSignup, setIsSignup }) {
           />
           <TextInput
             style={styles.textInput}
+            selectionColor="#2196F3"
             placeholder="Your Password"
             secureTextEntry={true}
             onChangeText={(enteredText) => setPassword(enteredText)}
@@ -67,7 +70,11 @@ export default function Signup({ navigation, isSignup, setIsSignup }) {
             Already Have a account?{" "}
             <Text
               onPress={() => navigation.navigate("Login")}
-              style={{ color: "blue", textDecorationLine: "underline" }}
+              style={{
+                color: "#2196F3",
+                textDecorationLine: "underline",
+                fontWeight: "bold",
+              }}
             >
               Login
             </Text>
@@ -94,7 +101,7 @@ const styles = StyleSheet.create({
   textInput: {
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: "skyblue",
+    borderColor: "lightgray",
     paddingVertical: 5,
     paddingHorizontal: 10,
     marginVertical: 5,

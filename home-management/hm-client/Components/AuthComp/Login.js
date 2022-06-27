@@ -37,6 +37,7 @@ export default function Login({ navigation }) {
         <View>
           <TextInput
             style={styles.textInput}
+            selectionColor="#2196F3"
             placeholder="Your Mobile"
             keyboardType="numeric"
             maxLength={11}
@@ -44,6 +45,7 @@ export default function Login({ navigation }) {
           />
           <TextInput
             style={styles.textInput}
+            selectionColor="#2196F3"
             placeholder="Your Password"
             secureTextEntry={true}
             onChangeText={(enteredText) => setPassword(enteredText)}
@@ -60,7 +62,11 @@ export default function Login({ navigation }) {
                 console.log("go to signup");
                 navigation.navigate("Signup");
               }}
-              style={{ color: "blue", textDecorationLine: "underline" }}
+              style={{
+                color: "#2196F3",
+                textDecorationLine: "underline",
+                fontWeight: "bold",
+              }}
             >
               Signup
             </Text>
@@ -87,7 +93,7 @@ const styles = StyleSheet.create({
   textInput: {
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: "skyblue",
+    borderColor: "lightgray",
     paddingVertical: 5,
     paddingHorizontal: 10,
     marginVertical: 5,
