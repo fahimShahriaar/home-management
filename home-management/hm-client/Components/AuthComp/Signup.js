@@ -1,38 +1,42 @@
-import { useState } from "react";
-import { Button, Image, StyleSheet, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import { Button, Image, StyleSheet, TextInput, View, Text } from "react-native";
 
-const Signup = () => {
+export default function Signup({ navigation, isSignup, setIsSignup }) {
+  const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
 
   function handleSignup() {
-    console.log(mobile);
-    console.log(password);
-    fetch("http://192.168.68.128:8080/user/login", {
+    console.log(name, mobile, password);
+    navigation.navigate("Dashboard");
+    fetch("http://192.168.68.128:8080/user/signup", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ mobile, password }),
+      body: JSON.stringify({ name, mobile, password }),
     })
       .then((response) => response.json())
       .then((data) => console.log(data))
-      .catch((error) => console.error(error))
-      .finally(() => console.log("hello"));
+      .catch((error) => console.error(error));
   }
-
   return (
     <View style={styles.signupContainer}>
       <View style={styles.form}>
         <Image
           style={styles.tinyLogo}
-          source={require("../assets/hm-logo.png")}
+          source={require("../../assets/hm-logo.png")}
         />
         <View>
           <TextInput
             style={styles.textInput}
-            placeholder="Your mobile"
+            placeholder="Your Name"
+            onChangeText={(enteredText) => setName(enteredText)}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Your Mobile"
             keyboardType="numeric"
             maxLength={11}
             onChangeText={(enteredText) => setMobile(enteredText)}
@@ -43,21 +47,28 @@ const Signup = () => {
             secureTextEntry={true}
             onChangeText={(enteredText) => setPassword(enteredText)}
           />
+          <View style={styles.submitButton}>
+            <Button title="Signup" onPress={handleSignup} />
+          </View>
         </View>
-        <View style={styles.submitButton}>
-          <Button title="Signup" onPress={handleSignup} />
+        <View style={{ marginTop: 10 }}>
+          <Text style={{ textAlign: "center" }}>
+            Already Have a account?{" "}
+            <Text
+              onPress={() => setIsSignup(false)}
+              style={{ color: "blue", textDecorationLine: "underline" }}
+            >
+              Login
+            </Text>
+          </Text>
         </View>
       </View>
     </View>
   );
-};
-
-export default Signup;
+}
 
 const styles = StyleSheet.create({
   signupContainer: {
-    // borderWidth: 1,
-    // height: "100%",
     paddingHorizontal: 40,
     flex: 1,
     justifyContent: "center",

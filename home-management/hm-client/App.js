@@ -3,20 +3,22 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet, View } from "react-native";
 // import FlexBox from "./Components/FlexBox";
 // import PracticeOne from "./Components/PracticeOne";
-// import PracticeTwo from "./Components/PracticeTwo";
-import Signup from "./Components/Signup";
+import PracticeTwo from "./Components/PracticeTwo";
+import AuthComp from "./Components/AuthComp/AuthComp";
+import ReactComp from "./ReactComp";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
       <View style={styles.appContainer}>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="Auth">
           <Stack.Screen
-            name="Signup"
-            component={Signup}
+            name="Auth"
+            component={AuthComp}
             options={{ headerShown: false }}
           />
+          <Stack.Screen name="Dashboard" component={ReactComp} />
         </Stack.Navigator>
       </View>
     </NavigationContainer>
