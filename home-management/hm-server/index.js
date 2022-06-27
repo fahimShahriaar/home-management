@@ -1,3 +1,5 @@
+const IP = "192.168.88.18";
+// const IP = "192.168.68.128";
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -22,6 +24,4 @@ app.use("/admin", adminHandler);
 app.use("/meal", mealHandler);
 app.use("/utility", utilityHandler);
 
-app.listen(8080, "192.168.68.128", () =>
-  console.log("listening on port: 8080")
-);
+app.listen(8080, IP, () => console.log("listening on port: 8080"));

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Button, Image, StyleSheet, TextInput, View, Text } from "react-native";
 
+const global = require("../../global");
+// console.log("INSIGNUPPAGE", global);
+
 export default function Signup({ navigation, isSignup, setIsSignup }) {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -8,8 +11,8 @@ export default function Signup({ navigation, isSignup, setIsSignup }) {
 
   function handleSignup() {
     console.log(name, mobile, password);
-    navigation.navigate("Dashboard");
-    fetch("http://192.168.68.128:8080/user/signup", {
+    // navigation.navigate("Dashboard");
+    fetch(`http://${global.IP}:8080/user/signup`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -18,7 +21,15 @@ export default function Signup({ navigation, isSignup, setIsSignup }) {
       body: JSON.stringify({ name, mobile, password }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          // do something
+          navigation.navigate("Login");
+        } else {
+          alert(`Failed!`);
+        }
+      })
       .catch((error) => console.error(error));
   }
   return (
@@ -55,7 +66,7 @@ export default function Signup({ navigation, isSignup, setIsSignup }) {
           <Text style={{ textAlign: "center" }}>
             Already Have a account?{" "}
             <Text
-              onPress={() => setIsSignup(false)}
+              onPress={() => navigation.navigate("Login")}
               style={{ color: "blue", textDecorationLine: "underline" }}
             >
               Login
@@ -88,12 +99,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 5,
   },
-  // passwordInput: {
-  //   borderWidth: 1,
-  //   borderColor: "skyblue",
-  //   padding: 5,
-  //   marginVertical: 5,
-  // },
   submitButton: {
     marginVertical: 5,
   },

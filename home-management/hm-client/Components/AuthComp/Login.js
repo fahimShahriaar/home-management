@@ -1,11 +1,32 @@
 import React, { useState } from "react";
 import { Button, Image, StyleSheet, TextInput, View, Text } from "react-native";
+const global = require("../../global");
 
-export default function Login({ navigation, signupState }) {
-  const [isSignup, setIsSignup] = signupState;
-  console.log(isSignup);
-  setIsSignup(true);
-  console.log(isSignup);
+export default function Login({ navigation }) {
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
+  function handleLogin() {
+    // console.log(mobile, password);
+    fetch(`http://${global.IP}:8080/user/login`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ mobile, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          // do something
+          navigation.navigate("Dashboard");
+        } else {
+          alert(`Failed!`);
+        }
+      })
+      .catch((error) => console.error(error));
+  }
   return (
     <View style={styles.signupContainer}>
       <View style={styles.form}>
@@ -19,16 +40,16 @@ export default function Login({ navigation, signupState }) {
             placeholder="Your Mobile"
             keyboardType="numeric"
             maxLength={11}
-            // onChangeText={(enteredText) => setMobile(enteredText)}
+            onChangeText={(enteredText) => setMobile(enteredText)}
           />
           <TextInput
             style={styles.textInput}
             placeholder="Your Password"
             secureTextEntry={true}
-            // onChangeText={(enteredText) => setPassword(enteredText)}
+            onChangeText={(enteredText) => setPassword(enteredText)}
           />
           <View style={styles.submitButton}>
-            <Button title="Login" onPress={() => console.log("clicked")} />
+            <Button title="Login" onPress={handleLogin} />
           </View>
         </View>
         <View style={{ marginTop: 15 }}>
@@ -37,9 +58,7 @@ export default function Login({ navigation, signupState }) {
             <Text
               onPress={() => {
                 console.log("go to signup");
-                setIsSignup(false);
-                navigation.navigate("Auth");
-                console.log("issignup", isSignup);
+                navigation.navigate("Signup");
               }}
               style={{ color: "blue", textDecorationLine: "underline" }}
             >
