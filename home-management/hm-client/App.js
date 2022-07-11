@@ -1,13 +1,13 @@
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet, View } from "react-native";
-// import FlexBox from "./Components/FlexBox";
-// import PracticeOne from "./Components/PracticeOne";
-// import PracticeTwo from "./Components/PracticeTwo";
-// import AuthComp from "./Components/AuthComp/AuthComp";
+import ActivityLog from "./Components/ActivityLog/ActivityLog";
 import Login from "./Components/AuthComp/Login";
 import Signup from "./Components/AuthComp/Signup";
-import ReactComp from "./ReactComp";
+import Dashboard from "./Components/Dashboard/Dashboard";
+import AppContextProvider from "./Store/AppContext";
+
+// export const AppContext = createContext();
 
 const MyTheme = {
   ...DefaultTheme,
@@ -21,43 +21,36 @@ const MyTheme = {
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
-    <NavigationContainer theme={MyTheme}>
-      <View style={styles.appContainer}>
-        <Stack.Navigator initialRouteName="Signup">
-          <Stack.Screen
-            name="Signup"
-            component={Signup}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="Dashboard" component={ReactComp} />
-        </Stack.Navigator>
-      </View>
-    </NavigationContainer>
+    <AppContextProvider>
+      <NavigationContainer theme={MyTheme}>
+        <View style={styles.appContainer}>
+          <Stack.Navigator initialRouteName="Login">
+            <Stack.Screen
+              name="Signup"
+              component={Signup}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="Dashboard" component={Dashboard} />
+            <Stack.Screen name="ActivityLog" component={ActivityLog} />
+          </Stack.Navigator>
+        </View>
+      </NavigationContainer>
+    </AppContextProvider>
   );
 }
 
 const styles = StyleSheet.create({
   appContainer: {
+    flex: 1,
     // paddingVertical: 50,
     // paddingHorizontal: 10,
-    flex: 1,
+  },
+  bottomNavigation: {
+    flexDirection: "row",
   },
 });
-
-{
-  /* <PracticeOne /> */
-}
-{
-  /* <PracticeTwo /> */
-}
-{
-  /* <FlexBox /> */
-}
-{
-  /* <Signup /> */
-}

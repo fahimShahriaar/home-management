@@ -1,10 +1,22 @@
-import React, { useState } from "react";
 import { Button, Image, StyleSheet, TextInput, View, Text } from "react-native";
+
 const global = require("../../global");
 
+import React, { useContext, useState } from "react";
+import { AppContext } from "../../Store/AppContext";
+
 export default function Login({ navigation }) {
+  // Get User State from Context
+  const { userInfoState } = useContext(AppContext);
+  const [userInfo, setUserInfo] = userInfoState;
+  // console.log("userInfo", userInfo);
+
+  // const [userInfo, setUserInfo] = userInfoState;
+  // console.log(userInfoState);
+
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+
   function handleLogin() {
     // console.log(mobile, password);
     fetch(`http://${global.IP}:8080/user/login`, {
@@ -20,6 +32,8 @@ export default function Login({ navigation }) {
         console.log(data);
         if (data.success) {
           // do something
+          const newData = { user: data.user, mealInfo: data.mealInfo };
+          setUserInfo(newData);
           navigation.navigate("Dashboard");
         } else {
           alert(`Failed!`);
@@ -27,6 +41,7 @@ export default function Login({ navigation }) {
       })
       .catch((error) => console.error(error));
   }
+
   return (
     <View style={styles.signupContainer}>
       <View style={styles.form}>
@@ -51,7 +66,11 @@ export default function Login({ navigation }) {
             onChangeText={(enteredText) => setPassword(enteredText)}
           />
           <View style={styles.submitButton}>
-            <Button title="Login" onPress={handleLogin} />
+            {/* <Button title="Login" onPress={handleLogin} /> */}
+            <Button
+              title="Login"
+              onPress={() => navigation.navigate("Dashboard")}
+            />
           </View>
         </View>
         <View style={{ marginTop: 15 }}>
