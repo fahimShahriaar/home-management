@@ -18,27 +18,33 @@ export default function UtilityOperation({ navigation }) {
       </Text>
       <View style={styles.utilityOperationContainer}>
         <Pressable
-          style={styles.addMealBox}
+          style={styles.addUtilityBox}
           onPress={() => navigation.navigate("AddUtility")}
         >
           <View>
-            <Text style={{ color: "whitesmoke" }}>Add Utility</Text>
+            <Text style={{ color: "whitesmoke", textAlign: "center" }}>
+              Add Utility
+            </Text>
           </View>
         </Pressable>
         <Pressable
-          style={styles.updateMealBox}
+          style={styles.updateUtilityBox}
           onPress={() => navigation.navigate("UpdateUtility")}
         >
           <View>
-            <Text style={{ color: "whitesmoke" }}>Update Utility</Text>
+            <Text style={{ color: "whitesmoke", textAlign: "center" }}>
+              Update Utility
+            </Text>
           </View>
         </Pressable>
         <Pressable
-          style={styles.utilityHistory}
+          style={styles.utilityHistoryBox}
           onPress={() => navigation.navigate("UtilityHistory")}
         >
           <View>
-            <Text style={{ color: "whitesmoke" }}>Utility History</Text>
+            <Text style={{ color: "whitesmoke", textAlign: "center" }}>
+              Utility History
+            </Text>
           </View>
         </Pressable>
       </View>
@@ -55,29 +61,38 @@ export default function UtilityOperation({ navigation }) {
 const styles = StyleSheet.create({
   utilityOperationContainer: {
     flexDirection: "row",
+    padding: 10,
   },
-  addMealBox: {
+  addUtilityBox: {
     backgroundColor: "#ec4899",
     flex: 1,
-    margin: 5,
-    borderRadius: 5,
-    padding: 5,
+    height: 100,
+    width: 100,
+    borderRadius: 100,
+    justifyContent: "center",
     alignItems: "center",
+    margin: 5,
   },
-  updateMealBox: {
+  updateUtilityBox: {
     backgroundColor: "cornflowerblue",
     flex: 1,
-    margin: 5,
-    borderRadius: 5,
-    padding: 5,
+    height: 100,
+    width: 100,
+    borderRadius: 100,
+    // borderWidth: 1,
+    justifyContent: "center",
     alignItems: "center",
+    margin: 5,
   },
-  utilityHistory: {
+  utilityHistoryBox: {
     backgroundColor: "#0d9488",
     flex: 1,
-    margin: 5,
-    borderRadius: 5,
-    padding: 5,
+    height: 100,
+    width: 100,
+    borderRadius: 100,
+    // borderWidth: 1,
+    justifyContent: "center",
     alignItems: "center",
+    margin: 5,
   },
 });
