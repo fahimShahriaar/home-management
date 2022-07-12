@@ -18,7 +18,7 @@ export default function DashboardOperation({ navigation }) {
         Dashboard Operation
       </Text>
       <MealOperation navigation={navigation} />
-      <UtilityOperation />
+      <UtilityOperation navigation={navigation} />
     </View>
   );
 }

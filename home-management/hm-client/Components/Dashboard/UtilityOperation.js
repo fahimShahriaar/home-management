@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Calendar from "./Calendar";
 
-export default function UtilityOperation() {
+export default function UtilityOperation({ navigation }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   return (
     <View>
@@ -16,10 +16,10 @@ export default function UtilityOperation() {
       >
         Utility
       </Text>
-      <View style={styles.mealOperationContainer}>
+      <View style={styles.utilityOperationContainer}>
         <Pressable
           style={styles.addMealBox}
-          onPress={() => setShowDatePicker(!showDatePicker)}
+          onPress={() => navigation.navigate("AddUtility")}
         >
           <View>
             <Text style={{ color: "whitesmoke" }}>Add Utility</Text>
@@ -27,7 +27,7 @@ export default function UtilityOperation() {
         </Pressable>
         <Pressable
           style={styles.updateMealBox}
-          onPress={() => setShowDatePicker(!showDatePicker)}
+          onPress={() => navigation.navigate("UpdateUtility")}
         >
           <View>
             <Text style={{ color: "whitesmoke" }}>Update Utility</Text>
@@ -35,7 +35,7 @@ export default function UtilityOperation() {
         </Pressable>
         <Pressable
           style={styles.utilityHistory}
-          onPress={() => setShowDatePicker(!showDatePicker)}
+          onPress={() => navigation.navigate("UtilityHistory")}
         >
           <View>
             <Text style={{ color: "whitesmoke" }}>Utility History</Text>
@@ -53,7 +53,7 @@ export default function UtilityOperation() {
 }
 
 const styles = StyleSheet.create({
-  mealOperationContainer: {
+  utilityOperationContainer: {
     flexDirection: "row",
   },
   addMealBox: {
