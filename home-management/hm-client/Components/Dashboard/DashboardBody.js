@@ -1,44 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React from "react";
+import DashboardStats from "./DashboardStats";
+import DashboardOperation from "./DashboardOperation";
+import TodaysMealStat from "./TodaysMealStat";
 
-export default function DashboardBody({ userInfo, setUserinfo }) {
+export default function DashboardBody({ userInfo, setUserinfo, navigation }) {
   return (
-    <View style={{ flexDirection: "row" }}>
-      <View style={styles.myMeal}>
-        <Text>My Meal</Text>
-        <Text>{userInfo?.mealInfo?.totalMeals}</Text>
-      </View>
-      <View style={styles.myCost}>
-        <Text>My Cost</Text>
-        <Text>{userInfo?.mealInfo?.totalBazarCost}</Text>
-      </View>
-      <View style={styles.utilityBill}>
-        <Text>Utility Bill</Text>
-      </View>
+    <View>
+      <ScrollView>
+        <DashboardStats userInfo={userInfo} setUserinfo={setUserinfo} />
+        <DashboardOperation navigation={navigation} />
+        <TodaysMealStat />
+      </ScrollView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  myMeal: {
-    flex: 1,
-    backgroundColor: "#e899dc",
-    padding: 5,
-    marginHorizontal: 2,
-    borderRadius: 5,
-  },
-  myCost: {
-    flex: 1,
-    backgroundColor: "#9bb1ff",
-    padding: 5,
-    marginHorizontal: 2,
-    borderRadius: 5,
-  },
-  utilityBill: {
-    flex: 1,
-    backgroundColor: "#f4d35e",
-    padding: 5,
-    marginHorizontal: 2,
-    borderRadius: 5,
-  },
-});
+const styles = StyleSheet.create({});

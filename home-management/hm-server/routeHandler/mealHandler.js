@@ -42,6 +42,7 @@ async function updateActivityLog(name, mobile, activity, date) {
     name,
     mobile,
     activity,
+    description: activity,
     date,
   });
   const result = await activityLog.save();

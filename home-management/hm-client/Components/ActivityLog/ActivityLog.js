@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import BottomNavigation from "../BottomNavigation/BottomNavigation";
+import ActivityLogBody from "./ActivityLogBody";
 const global = require("../../global");
 // console.log(global);
 
@@ -18,12 +19,12 @@ export default function ActivityLog({ navigation }) {
       });
   }, []);
 
-  console.log(activities);
+  // console.log(activities);
   return (
     <View style={{ flex: 1 }}>
       <Text>Activity Log</Text>
       <View style={styles.activityLogContainer}>
-        <Text>hello</Text>
+        <ActivityLogBody activities={activities} />
       </View>
       <View style={{ height: "10%", borderWidth: 1, marginBottom: 2 }}>
         <BottomNavigation navigation={navigation} />

@@ -66,11 +66,11 @@ export default function Login({ navigation }) {
             onChangeText={(enteredText) => setPassword(enteredText)}
           />
           <View style={styles.submitButton}>
-            {/* <Button title="Login" onPress={handleLogin} /> */}
-            <Button
+            <Button title="Login" onPress={handleLogin} />
+            {/* <Button
               title="Login"
               onPress={() => navigation.navigate("Dashboard")}
-            />
+            /> */}
           </View>
         </View>
         <View style={{ marginTop: 15 }}>
