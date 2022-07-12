@@ -14,7 +14,7 @@ export default function UtilityOperation({ navigation }) {
           fontWeight: "bold",
         }}
       >
-        Utility
+        Utility Operation
       </Text>
       <View style={styles.utilityOperationContainer}>
         <Pressable

@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import DatePicker from "react-native-modern-datepicker";
 
-const Calendar = ({ showDatePicker, setShowDatePicker }) => {
-  const [selectedDate, setSelectedDate] = useState("");
-  //   console.log(selectedDate);
-
+const Calendar = ({
+  showCalendar,
+  setShowCalendar,
+  selectedDate,
+  setSelectedDate,
+}) => {
+  // const [selectedDate, setSelectedDate] = useState("");
+  // console.log(selectedDate);
   return (
     <DatePicker
       onSelectedChange={(date) => {
         setSelectedDate(date);
         console.log(date);
-        setShowDatePicker(!showDatePicker);
+        setShowCalendar(!showCalendar);
       }}
       options={{ textHeaderFontSize: 15 }}
       mode="calendar"
