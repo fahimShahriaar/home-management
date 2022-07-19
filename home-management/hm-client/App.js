@@ -8,7 +8,7 @@ import AddMeal from "./Components/Dashboard/AddMeal";
 import AddUtility from "./Components/Dashboard/AddUtility";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import UpdateMeal from "./Components/Dashboard/UpdateMeal";
-import UpdateUtility from "./Components/Dashboard/Updateutility";
+import UpdateUtility from "./Components/Dashboard/UpdateUtility";
 import UtilityHistory from "./Components/Dashboard/UtilityHistory";
 import AppContextProvider from "./Store/AppContext";
 
